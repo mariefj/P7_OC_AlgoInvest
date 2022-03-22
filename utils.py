@@ -11,14 +11,14 @@ def get_data():
             return [
                 [action[0], float(action[1]), float(action[2])/100]
                 for action in data_csv
-                if float(action[1]) > 0
+                if float(action[1]) > 0 and float(action[2]) > 0
             ]
     except FileNotFoundError:
         print("Fichier non trouvé")
 
 def print_combinations(combs):
     for comb in combs:
-        print(comb[0], '|', round(comb[1]), '€ |', round(comb[2]*100), '%')
+        print(comb[0], '|', round(comb[1], 2), '€ |', round(comb[2]*100, 2), '%')
 
 def print_results(benef, cost, comb, time):
     print("\n\n*********************************************************\n")
