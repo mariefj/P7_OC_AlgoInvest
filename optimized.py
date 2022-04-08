@@ -1,32 +1,40 @@
 import time
-from itertools import combinations
 
-from utils import get_data, print_results
+from utils import get_data_opti, print_results
 
 BUDGET = 500
 
-def getKey(item):
-    return item[1] * item[2]
-
 def optimized(data):
-    max_benef = 0
-    total_cost = 0
+    budget = BUDGET * 100
+
+    m = [[0 for x in range(budget + 1)] for x in range(len(data) + 1)]
+
+    for i in range(1, len(data) + 1):
+        for j in range(1, budget + 1):
+            if data[i-1][1] <= j:
+                m[i][j] = max(
+                    data[i-1][2] + m[i-1][j-data[i-1][1]],
+                    m[i-1][j]
+                )
+            else:
+                m[i][j] = m[i-1][j]
+
+    n = len(data)
     best_comb = []
-    i = 0
 
-    data = sorted(data, reverse=True, key=getKey)
-    while total_cost < BUDGET and i < len(data):
-        cost = data[i][1]
-        if total_cost + cost <= BUDGET:
-            total_cost += cost
-            max_benef += data[i][1] * data[i][2]
-            best_comb.append(data[i])
-        i += 1
+    while budget >= 0 and n >= 0:
+        action = data[n-1]
+        if m[n][budget] == m[n-1][budget-action[1]] + action[2]:
+            best_comb.append(action)
+            budget -= action[1]
+        n -= 1
 
-    return max_benef, total_cost, best_comb
+    return  (m[-1][-1],
+            sum([action[1]/100 for action in best_comb]),
+            [[a[0], a[1]/100, a[2]/(a[1]/100)] for a in best_comb])
 
 def main():
-    data = get_data()
+    data = get_data_opti()
     start = time.time()
 
     print("\nDétermination de la meilleure combinaison en cours...")

@@ -16,6 +16,21 @@ def get_data():
     except FileNotFoundError:
         print("Fichier non trouvé")
 
+def get_data_opti():
+    try:
+        with open(sys.argv[1], newline='') as file:
+            data_csv = csv.reader(file, delimiter=',')
+            # ignore header
+            next(data_csv)
+        
+            return [
+                [action[0], int(float(action[1]) * 100), float(action[1]) * float(action[2])/100]
+                for action in data_csv
+                if int(float(action[1])*100) > 0 and float(action[2]) > 0
+            ]
+    except FileNotFoundError:
+        print("Fichier non trouvé")
+
 def print_combinations(combs):
     for comb in combs:
         print(comb[0], '|', round(comb[1], 2), '€ |', round(comb[2]*100, 2), '%')
